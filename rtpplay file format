@@ -1,0 +1,30 @@
+http://www.cs.columbia.edu/irt/software/rtptools/
+
+dump in binary format, suitable for rtpplay. The format is as follows: The file starts with
+#!rtpplay1.0 address/port\n
+The version number indicates the file format version, not the version of RTP tools used to generate the file. 
+The current file format version is 1.0.
+
+This is followed by one binary header (RD_hdr_t) and one RD_packet_t structure for each received packet.
+All fields are in network byte order. The RTP and RTCP packets are recorded as-is.
+
+typedef struct {
+  struct timeval start;  /* start of recording (GMT) */
+  u_int32 source;        /* network source (multicast address) */
+  u_int16 port;          /* UDP port */
+} RD_hdr_t;
+
+typedef struct {
+  u_int16 length;    /* length of packet, including this header (may 
+                        be smaller than plen if not whole packet recorded) */
+  u_int16 plen;      /* actual header+payload length for RTP, 0 for RTCP */
+  u_int32 offset;    /* milliseconds since the start of recording */
+} RD_packet_t;
+
+
+rtpdump文件的二进制格式如下：
+第一行： #!rtpplay1.0 address/port\n，其中1.0表示文件格式的版本，非rtp tools版本。
+然后，RD_hdr_t结构体。
+再然后是每个rtp packet，头部加一个RD_packet_t结构体。
+
+以上均为网络字节序。
